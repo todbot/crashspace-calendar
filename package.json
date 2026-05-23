@@ -8,6 +8,6 @@
     "clean": "rm -rf node_modules"
   },
   "dependencies": {
-    "node-ical": "^0.20.1"
+    "node-ical": "^0.26.1"
   }
 }
