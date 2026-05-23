@@ -1,0 +1,13 @@
+{
+  "name": "crashspace-calendar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fetch public Google calendar feed (no API key), turn into JSON.",
+  "scripts": {
+    "build": "node generate-events.js",
+    "clean": "rm -rf node_modules"
+  },
+  "dependencies": {
+    "node-ical": "^0.20.1"
+  }
+}

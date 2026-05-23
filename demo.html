@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Events</title>
+</head>
+<body>
+<div id="out">Loading…</div>
+<script>
+fetch("events.json")
+  .then(r => r.json())
+  .then(data => {
+    var out = document.getElementById("out");
+    out.textContent = "";
+    var opts = { weekday: "short", month: "short", day: "numeric",
+                 hour: "numeric", minute: "2-digit",
+                 timeZone: "America/Los_Angeles" };
+    data.events.forEach(function (ev) {
+      var when = ev.allDay
+        ? new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/Los_Angeles" }).format(new Date(ev.start)) + " (all day)"
+        : new Intl.DateTimeFormat("en-US", opts).format(new Date(ev.start));
+      var line = document.createElement("div");
+      line.textContent = when + " — " + ev.title;
+      out.appendChild(line);
+    });
+  })
+  .catch(function (e) {
+    document.getElementById("out").textContent =
+      "Could not load events.json (" + e.message + "). Serve over http://, not file://.";
+  });
+</script>
+</body>
+</html>
