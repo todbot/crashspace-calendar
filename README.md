@@ -16,3 +16,50 @@ Test out the result with:
 - `python3 -m http.server 8000`
 - visiting http://localhost:8000/demo.html in a browser.
 
+
+## What problem this repo solves
+
+### Problem
+
+1. You want a JSON feed of a [publicly-viewable Google Calendar](https://calendar.google.com/calendar/u/0/embed?src=crashspacela@gmail.com&ctz=America/Los_Angeles)
+
+2. You want that JSON feed usable by a browser-based bit of JavaScript 
+
+3. You don't want to embed any API keys into world-readble browser code
+
+### Data feed issue
+
+- Google doesn't provide an easy public RSS-like or just JSON feed of calendar data
+
+- You can't use the [Calendar API v3](https://developers.google.com/workspace/calendar/api/v3/reference),
+  (which would give you a URL that looks something like this: 
+`https://www.googleapis.com/calendar/v3/calendars/crashspacela%40gmail.com/events?key=YOUR_API_KEY&timeMin=2026-05-23T00:00:00Z&singleEvents=true&orderBy=startTime`) 
+  because you'd need to embed `YOUR_API_KEY` into the front-end browser code.
+  
+- There does exist an API-key-less feed in the form of an 
+  [iCal (ICS) URL](https://calendargeek.com/calendar-geek-guide-sync-import-share-manage), 
+  and it could be possible to parse this in-browser, but the URL doesn't set the 
+  [CORS HTTP Header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS)
+  to be to be "allow all" (e.g. `access-control-allow-origin: *`) to let
+  browsers make [`fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) happen. 
+  
+  
+### Solution
+
+This repo creates an "events.json" static file that acts as a JSON feed for the
+public Google calendar.  The "events.json" file is the parsed output of the iCal ICS feed.
+It is created by `generate_events.js`. script.
+
+The `generate_events.js` script works by fetching the ICS feed, 
+using `node-ical` to do the actual parsing, and then a little logic to flatten 
+the somewhat strange layout of calendar data. 
+
+Since calendar entries change rather infrequently, this script is meant to be run
+periodically every few hours.  As a demonstration, this repo has a github action
+set up to run this script every 6 hours and generate a github docs site with
+the error.json file. You can view it here: 
+
+- https://todbot.github.io/crashspace-calendar/events/events.json
+
+
+
